@@ -5,15 +5,9 @@ from django.views.generic import ListView
 
 from .models import Post
 
-
-class PostListView(ListView):
-
+def post_list(request):
     query_set = Post.published.all()
-    context_object_name = 'posts'
-    paginate_by = 3
-    template_name = 'blog/post/list.html'
-    # Pagination with 3 post per page
-    paginator = Paginator(post_list, 3)
+    paginator = Paginator(query_set, 3)
     page_number = request.GET.get('page', 1)
     try:
         posts = paginator.page(page_number)
@@ -24,6 +18,13 @@ class PostListView(ListView):
     return render(request,
                   'blog/post/list.html',
                   {'posts': posts})
+
+
+class PostListView(ListView):
+    queryset = Post.published.all()
+    context_object_name = 'posts'
+    paginate_by = 3
+    template_name = 'blog/post/list.html'
 
 
 def post_detail(request, post, year, month, day):
